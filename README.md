@@ -1,170 +1,95 @@
-# AI-Generated Product Image Detection
+# Spotting AI-Generated Product Images
 
-## Overview
+**Can a model tell a real product photo from one made by Midjourney, DALL·E or Stable Diffusion?**
 
-This project was developed for the CSC1187 Machine Learning Assignment at Dublin City University and focuses on detecting AI-generated product images in e-commerce marketplaces.
+Online marketplaces are filling up with product images that were never photographed. A buyer looking at a listing has little way of knowing whether the item in the picture exists. This project builds a classifier that looks at a product image and decides whether it is an **authentic photo (0)** or **AI-generated (1)**.
 
-The objective is to classify product listing images as:
-
-- Authentic Product Image (0)
-- AI-Generated Product Image (1)
-
-The project investigates and compares state-of-the-art deep learning architectures, including Vision Transformers (ViT) and EfficientNet, using transfer learning and fine-tuning strategies.
+It started as the CSC1187 Machine Learning assignment at Dublin City University, set up as a competition on e-commerce product listings, and I treated it as a chance to compare two very different kinds of image model on a problem that matters.
 
 ---
 
-## Problem Statement
+## The two models
 
-With the rapid growth of generative AI tools such as:
+**Vision Transformer (ViT-Base-Patch16-224).** A transformer that splits an image into patches and uses self-attention to relate every patch to every other one. It sees the whole picture at once, which is useful when the giveaways of a fake are subtle and spread across the image. I fine-tuned the full model.
 
-- Midjourney
-- DALL·E
-- Stable Diffusion
+**EfficientNet-B4.** A convolutional network that scales depth, width and resolution together. It is a strong, well-proven baseline, and I wanted to know whether the newer transformer approach would actually beat it.
 
-it has become increasingly difficult to distinguish genuine product photographs from synthetic images.
+Both started from pretrained weights (transfer learning) and were fine-tuned on the task.
 
-This project aims to develop a robust binary image classifier capable of identifying AI-generated product images.
+## How I approached it
 
----
+1. **Preparing the data:** image preprocessing, normalisation, augmentation, and a train/validation split.
+2. **Training experiments:** transfer learning, fine-tuning, learning rate scheduling and hyperparameter tuning, plus some experiments with ensembling the two models.
+3. **Scoring:** the main metric was **F1**, because the classes were not evenly balanced and the competition used it too. Accuracy alone can look good while missing the images you most want to catch.
 
-## Models Evaluated
-
-### Vision Transformer (ViT-Base-Patch16-224)
-
-- Transformer-based image classification model
-- Captures global image relationships through self-attention
-- Fully fine-tuned on the training dataset
-
-### EfficientNet-B4
-
-- Convolutional Neural Network (CNN)
-- Compound scaling architecture
-- Strong baseline for image classification tasks
-
----
-
-## Methodology
-
-### Data Preparation
-
-- Image preprocessing
-- Normalization
-- Data augmentation
-- Train-validation split
-
-### Training Experiments
-
-- Transfer learning
-- Fine-tuning pretrained models
-- Learning rate scheduling
-- Hyperparameter tuning
-- Ensemble experimentation
-
-### Evaluation Metric
-
-Primary Metric:
-
-- F1 Score
-
-The F1 Score was selected due to class imbalance considerations and competition requirements.
+*(Add the dataset here: where it came from, how many images, and the real/AI split. For example, "X training images, Y% AI-generated".)*
 
 ---
 
 ## Results
 
-### Model Comparison
+| Model | F1 score |
+|---|---|
+| Vision Transformer (ViT) | **[add your F1]** |
+| EfficientNet-B4 | [add your F1] |
 
-| Model | Performance |
-|---------|---------|
-| Vision Transformer (ViT) | Best Performing Model |
-| EfficientNet-B4 | Competitive Baseline |
+*(If the competition had a leaderboard, add your score and rank, but only if you are sure of them.)*
 
-### Key Findings
+**What I found**
 
-- Vision Transformer outperformed EfficientNet-B4.
-- Transformer-based architectures captured global image artefacts more effectively.
-- Fine-tuning significantly improved classification performance.
-- AI-generated images exhibit subtle global inconsistencies that are better detected through self-attention mechanisms.
+- The Vision Transformer beat EfficientNet-B4.
+- Fine-tuning made a big difference compared with using the pretrained models as they were. *(Add the before and after numbers.)*
+
+**Why I think ViT won.** AI-generated images often have small inconsistencies that show up across the whole image rather than in one spot, such as lighting that does not quite agree with itself or textures that repeat oddly. Self-attention looks at the image globally, so it may be better placed to notice these. This is my interpretation of the results, not something I have proved. I did not run tools like Grad-CAM to see what the models were actually looking at, which is the first thing on my list below.
+
+## Limitations
+
+- The models were trained on images from a fixed set of generators. New diffusion models produce different artefacts, so the detector may not carry over.
+- I have not visualised what the models focus on, so the "global inconsistencies" explanation is a hypothesis.
+- Results come from one dataset. *(Add anything else that applies, such as image resolution limits or the validation approach.)*
+
+## What I would try next
+
+- Grad-CAM, to check whether the model really is looking at the artefacts I think it is
+- Larger Vision Transformers, Swin Transformers and ConvNeXt
+- A proper ensemble of the best models
+- Testing on images from newer diffusion models
 
 ---
 
-## Repository Structure
+## What is in this repository
 
-```text
-ETSY-AI-Image-Detection/
-│
-├── source_code.ipynb
-├── Final_Esty_Assignment_Report.pdf
-├── submission_vit.csv
-├── submission_effnet.csv
-├── README.md
-└── requirements.txt
+*(Check this against the real files, and consider renaming the report to fix the "Esty" typo.)*
+
+```
+source_code.ipynb                  # full training and evaluation notebook
+Final_Esty_Assignment_Report.pdf   # the written report
+submission_vit.csv                 # ViT predictions
+submission_effnet.csv              # EfficientNet predictions
+requirements.txt
+README.md
 ```
 
----
+## Tech stack
 
-## Technologies Used
+Python · PyTorch · Hugging Face Transformers · timm · NumPy · Pandas · Matplotlib · Scikit-learn
 
-- Python
-- PyTorch
-- Transformers
-- timm
-- NumPy
-- Pandas
-- Matplotlib
-- Scikit-learn
-
----
-
-## Installation
-
-Clone the repository:
+## Run it yourself
 
 ```bash
-git clone https://github.com/yourusername/etsy-ai-image-detection.git
-
-cd etsy-ai-image-detection
-```
-
-Install dependencies:
-
-```bash
+git clone https://github.com/Sumu28/<your-repo-name>.git
+cd <your-repo-name>
 pip install -r requirements.txt
-```
-
----
-
-## Running the Project
-
-Open the notebook:
-
-```bash
 jupyter notebook source_code.ipynb
 ```
 
-Train and evaluate the models following the notebook workflow.
+Then run the notebook from top to bottom to train and evaluate both models.
 
----
+## Author
 
-## Future Work
-
-- Larger Vision Transformer architectures
-- Swin Transformers
-- ConvNeXt models
-- Model ensembling
-- Explainable AI techniques (Grad-CAM)
-- Detection of images generated by newer diffusion models
-
----
-
-## Authors
-- Sumukha Sagar
-
-School of Computing  
-Dublin City University
-
----
+Sumukha Sagar
+School of Computing, Dublin City University
 
 ## License
 
-MIT License
+MIT
