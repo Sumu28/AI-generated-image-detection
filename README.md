@@ -22,7 +22,6 @@ Both started from pretrained weights (transfer learning) and were fine-tuned on 
 2. **Training experiments:** transfer learning, fine-tuning, learning rate scheduling and hyperparameter tuning, plus some experiments with ensembling the two models.
 3. **Scoring:** the main metric was **F1**, because the classes were not evenly balanced and the competition used it too. Accuracy alone can look good while missing the images you most want to catch.
 
-*(Add the dataset here: where it came from, how many images, and the real/AI split. For example, "X training images, Y% AI-generated".)*
 
 ---
 
@@ -33,7 +32,7 @@ Both started from pretrained weights (transfer learning) and were fine-tuned on 
 | Vision Transformer (ViT) | **[add your F1]** |
 | EfficientNet-B4 | [add your F1] |
 
-*(If the competition had a leaderboard, add your score and rank, but only if you are sure of them.)*
+
 
 **What I found**
 
@@ -59,7 +58,6 @@ Both started from pretrained weights (transfer learning) and were fine-tuned on 
 
 ## What is in this repository
 
-*(Check this against the real files, and consider renaming the report to fix the "Esty" typo.)*
 
 ```
 source_code.ipynb                  # full training and evaluation notebook
