@@ -14,7 +14,7 @@ It started as the CSC1187 Machine Learning assignment at Dublin City University,
 
 **EfficientNet-B4.** A convolutional network that scales depth, width and resolution together. It is a strong, well-proven baseline, and I wanted to know whether the newer transformer approach would actually beat it.
 
-Both started from pretrained weights (transfer learning) and were fine-tuned on the task.
+Both started from pretrained weights (transfer learning). ViT was fully fine-tuned, and EfficientNet was partially fine-tuned.
 
 ## How I approached it
 
@@ -22,22 +22,22 @@ Both started from pretrained weights (transfer learning) and were fine-tuned on 
 2. **Training experiments:** transfer learning, fine-tuning, learning rate scheduling and hyperparameter tuning, plus some experiments with ensembling the two models.
 3. **Scoring:** the main metric was **F1**, because the classes were not evenly balanced and the competition used it too. Accuracy alone can look good while missing the images you most want to catch.
 
-
 ---
 
 ## Results
 
-| Model | F1 score |
-|---|---|
-| Vision Transformer (ViT) | **[add your F1]** |
-| EfficientNet-B4 | [add your F1] |
+| Model | Validation F1 | Notes |
+|---|---|---|
+| ViT-Base/16-224 | **0.8721** | Best |
+| EfficientNet-B4 | 0.7876 | Partial fine-tune |
+| Ensemble (0.8 ViT / 0.2 EfficientNet) | 0.77 | Below ViT on its own |
 
-
+These are scores on the validation set. *(If the competition had a leaderboard, add your test score and rank here, but only if you are sure of them.)*
 
 **What I found**
 
-- The Vision Transformer beat EfficientNet-B4.
-- Fine-tuning made a big difference compared with using the pretrained models as they were. *(Add the before and after numbers.)*
+- The Vision Transformer beat EfficientNet-B4 by about 8.5 F1 points (0.8721 vs. 0.7876). One caveat: EfficientNet was only partially fine-tuned, so a fully fine-tuned version might have narrowed the gap.
+- **Ensembling did not help.** Blending the two models (80% ViT, 20% EfficientNet) scored 0.77, which is worse than ViT alone. The weaker model seems to have pulled the stronger one down rather than adding anything.
 
 **Why I think ViT won.** AI-generated images often have small inconsistencies that show up across the whole image rather than in one spot, such as lighting that does not quite agree with itself or textures that repeat oddly. Self-attention looks at the image globally, so it may be better placed to notice these. This is my interpretation of the results, not something I have proved. I did not run tools like Grad-CAM to see what the models were actually looking at, which is the first thing on my list below.
 
@@ -45,13 +45,14 @@ Both started from pretrained weights (transfer learning) and were fine-tuned on 
 
 - The models were trained on images from a fixed set of generators. New diffusion models produce different artefacts, so the detector may not carry over.
 - I have not visualised what the models focus on, so the "global inconsistencies" explanation is a hypothesis.
-- Results come from one dataset. *(Add anything else that applies, such as image resolution limits or the validation approach.)*
+- The scores above are validation scores from one dataset. *(Add anything else that applies, such as image resolution limits or the validation approach.)*
 
 ## What I would try next
 
 - Grad-CAM, to check whether the model really is looking at the artefacts I think it is
 - Larger Vision Transformers, Swin Transformers and ConvNeXt
-- A proper ensemble of the best models
+- Revisiting ensembling, for example with two models of similar strength or a learned blend instead of fixed weights
+- Fully fine-tuning EfficientNet-B4 for a fairer comparison
 - Testing on images from newer diffusion models
 
 ---
